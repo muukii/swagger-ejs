@@ -4,5 +4,9 @@
   "dependencies": {},
   "ambientDependencies": {
     "node": "registry:dt/node#4.0.0+20160330064709"
+  },
+  "ambientDevDependencies": {
+    "ejs": "registry:dt/ejs#0.0.0+20160317120654",
+    "node": "registry:dt/node#4.0.0+20160330064709"
   }
 }

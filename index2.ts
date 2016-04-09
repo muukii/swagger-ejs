@@ -1,7 +1,5 @@
-/// <reference path="typings/main.d.ts" />
-
-import SwaggerParser from "swagger-parser";
-import fs from "fs";
+import SwaggerParser = require("swagger-parser")
+import fs = require('fs')
 import ejs = require('ejs')
 import rmdir = require('rmdir')
 import mkdirp = require("mkdirp")
