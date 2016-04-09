@@ -1,0 +1,16 @@
+{
+  "name": "swagger",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "swagger-parser": "^3.4.0",
+    "typescript": "^1.8.9"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "muukii <muukii.muukii@gmail.com> (http://www.muukii.me/)",
+  "license": "MIT"
+}

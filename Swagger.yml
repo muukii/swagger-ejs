@@ -1,0 +1,278 @@
+# Example YAML to get you started quickly.
+# Be aware that YAML has indentation based scoping.
+# Code completion support is available so start typing for available options.
+swagger: '2.0'
+
+# This is your document metadata
+info:
+  version: "1.0.0"
+  title: Unsplash
+
+host: api.unsplash.com
+# basePath prefixes all resource paths
+# basePath:
+schemes:
+  - https
+
+## PATHS ##
+paths:
+  /photos:
+    get:
+      description:
+        Get a single page from the list of all photos.
+      parameters:
+        -
+          name: page
+          in: query
+          description:
+            "Page number to retrieve. (Optional, default: 1)"
+          required: false
+          type: integer
+        -
+          name: per_page
+          in: query
+          description:
+            "Number of items per page. (Optional; default: 10)"
+          required: false
+          type: integer
+        -
+          name: order_by
+          in: query
+          description:
+            "How to sort the photos. Optional. (Valid values: latest, oldest, popular; default: latest)"
+          required: false
+          type: integer
+      # Expected responses for this operation:
+      responses:
+       "200":
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Photos'
+
+  /photos/search:
+    get:
+      description:
+        Get a single page from a photo search. Optionally limit your search to a set of categories by supplying the category ID’s.
+      parameters:
+        -
+          name: query
+          in: query
+          description:
+            Search terms.
+          required: true
+          type: string
+        -
+          name: category
+          in: query
+          description:
+            Category ID(‘s) to filter search. If multiple, comma-separated.
+          required: true
+          type: string
+      responses:
+       "200":
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Photos'
+
+  /photos/{id}:
+    get:
+      description:
+        Retrieve a single photo.
+      parameters:
+        -
+          name: id
+          in: path
+          description: ""
+          required: true
+          type: string
+        -
+          name: w
+          in: query
+          description: ""
+          required: true
+          type: integer
+        -
+          name: h
+          in: query
+          description: ""
+          required: true
+          type: integer
+        -
+          name: rect
+          in: query
+          description:
+            "4 comma-separated integers representing x, y, width, height of the cropped rectangle."
+          required: true
+          type: string
+      responses:
+       "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/Photo'
+
+definitions:
+  Photos:
+    type: object
+    properties:
+      id:
+        type: string
+      width:
+        type: integer
+      height:
+        type: integer
+      color:
+        type: string
+      likes:
+        type: integer
+      liked_by_user:
+        type: boolean
+      user:
+        $ref: '#/definitions/User'
+      urls:
+        $ref: '#/definitions/PhotoURLs'
+      links:
+        $ref: '#/definitions/PhotoLinks'
+      categories:
+        type: array
+        items:
+          $ref: '#/definitions/Category'
+
+  Photo:
+    type: object
+    properties:
+      id:
+        type: string
+      width:
+        type: integer
+      height:
+        type: integer
+      color:
+        type: string
+      likes:
+        type: integer
+      liked_by_user:
+        type: boolean
+      user:
+        $ref: '#/definitions/User'
+      urls:
+        $ref: '#/definitions/PhotoURLs'
+      links:
+        $ref: '#/definitions/PhotoLinks'
+      categories:
+        type: array
+        items:
+          $ref: '#/definitions/Category'
+      location:
+        $ref: '#/definitions/Location'
+      exif:
+        $ref: '#/definitions/Exif'
+
+  User:
+    type: object
+    properties:
+      id:
+        type: string
+      username:
+        type: string
+      name:
+        type: string
+      profile_image:
+        $ref: '#/definitions/ProfileImage'
+      links:
+        $ref: '#/definitions/UserLinks'
+
+  ProfileImage:
+    type: object
+    properties:
+      small:
+        type: string
+      medium:
+        type: string
+      large:
+        type: string
+
+  UserLinks:
+    type: object
+    properties:
+      self:
+        type: string
+      html:
+        type: string
+      photos:
+        type: string
+      likes:
+        type: string
+
+  PhotoURLs:
+    type: object
+    properties:
+      raw:
+        type: string
+      full:
+        type: string
+      regular:
+        type: string
+      small:
+        type: string
+      thumb:
+        type: string
+
+  PhotoLinks:
+    type: object
+    properties:
+      self:
+        type: string
+      html:
+        type: string
+      download:
+        type: string
+
+  Category:
+    type: object
+    properties:
+      id:
+        type: integer
+      title:
+        type: string
+      photo_count:
+        type: integer
+      links:
+        $ref: '#/definitions/CategoryLinks'
+
+  CategoryLinks:
+    type: object
+    properties:
+      self:
+        type: string
+      photos:
+        type: string
+
+  Exif:
+    type: object
+    properties:
+      make:
+        type: string
+      model:
+        type: string
+      exposure_time:
+        type: number
+        format: double
+      aperture:
+        type: number
+        format: double
+      focal_length:
+        type: integer
+      iso:
+        type: integer
+
+  Location:
+    type: object
+    properties:
+      city:
+        type: string
+      country:
+        type: string
