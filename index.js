@@ -66,9 +66,15 @@ SwaggerParser.parse(sampleSwagger)
     for (var path in api.paths) {
       console.log("-" + path)
       let pathObject = api.paths[path]
-      let pathCode = ejs.render(pathTemplate, {info: info, path: pathObject})
+      let name = escape(path)
       
-      let writeFilePath = pathWritePath + escape(path) + fileExtension
+      let variables = {info: info, path: pathObject, name : name}
+      
+      console.log(variables)
+      
+      let pathCode = ejs.render(pathTemplate, variables)
+      
+      let writeFilePath = pathWritePath + name + fileExtension
       
       writeFile(writeFilePath, pathCode)
     }
@@ -76,9 +82,15 @@ SwaggerParser.parse(sampleSwagger)
     console.log("### Definitions ###")
     for (var definition in api.definitions) {
       console.log("-" + definition)      
-      let modelCode = ejs.render(modelTemplate, {info: info, definition: definition})
       
-      let writeFilePath = modelWritePath + escape(definition) + fileExtension
+      let difinitionObject = api.definitions[definition]
+      let name = escape(definition)
+      let variables = {info: info, definition: difinitionObject, name : name}
+      
+      console.log(variables)
+
+      let modelCode = ejs.render(modelTemplate, variables)      
+      let writeFilePath = modelWritePath + name + fileExtension
       writeFile(writeFilePath, modelCode)
     }
     
