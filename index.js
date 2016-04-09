@@ -1,26 +1,46 @@
 'use strict';
 
-let SwaggerParser = require('swagger-parser')
-let ejs = require('ejs')
-let rmdir = require('rmdir')
-let mkdirp = require("mkdirp")
-let fs = require("fs")
-let getDirName = require("path").dirname
+const SwaggerParser = require('swagger-parser')
+const ejs = require('ejs')
+const rmdir = require('rmdir')
+const mkdirp = require("mkdirp")
+const fs = require("fs")
+const getDirName = require("path").dirname
 
-let sampleSwagger = "./Swagger.yml"
-let pathTemplate = fs.readFileSync('./templates/path.ejs', 'utf-8')
-let modelTemplate = fs.readFileSync('./templates/model.ejs', 'utf-8')
+const sampleSwagger = "./Swagger.yml"
+const pathTemplate = fs.readFileSync('./templates/path.ejs', 'utf-8')
+const modelTemplate = fs.readFileSync('./templates/model.ejs', 'utf-8')
 
-let pathWritePath = "./Generated/Paths"
-let modelWritePath = "./Generated/Models"
-let fileExtension = ".swift"
+const pathWritePath = "./Generated/Paths/"
+const modelWritePath = "./Generated/Models/"
+const fileExtension = ".swift"
 
-function writeFile (path, contents) {
+function writeFile(path, contents) {
   mkdirp(getDirName(path), function (err) {
     if (err) return
     fs.writeFileSync(path, contents)
   })
 }
+
+function escape(string) {
+    var string = string
+    string = string.replace("{","_")
+    string = string.replace("}","_")
+    let array = string.split("/")
+    if (array[0] == string) {
+        return string
+    }
+    console.log(array)
+    var name = ""
+    for (var i in array) {
+        var path = array[i]
+        path = path.charAt(0).toUpperCase() + path.slice(1);
+        name = name + path
+    }
+    return name
+}
+
+
 
 console.log("-> Clean up...")
 
@@ -48,7 +68,7 @@ SwaggerParser.parse(sampleSwagger)
       let pathObject = api.paths[path]
       let pathCode = ejs.render(pathTemplate, {info: info, path: pathObject})
       
-      let writeFilePath = pathWritePath + path + fileExtension
+      let writeFilePath = pathWritePath + escape(path) + fileExtension
       
       writeFile(writeFilePath, pathCode)
     }
@@ -56,9 +76,9 @@ SwaggerParser.parse(sampleSwagger)
     console.log("### Definitions ###")
     for (var definition in api.definitions) {
       console.log("-" + definition)      
-      let modelCode = ejs.render(modelTemplate, {info: info, path: path})
+      let modelCode = ejs.render(modelTemplate, {info: info, definition: definition})
       
-      let writeFilePath = modelWritePath + path + fileExtension
+      let writeFilePath = modelWritePath + escape(definition) + fileExtension
       writeFile(writeFilePath, modelCode)
     }
     
