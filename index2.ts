@@ -1,14 +1,12 @@
 /// <reference path="typings/main.d.ts" />
 
-'use strict';
-
-const SwaggerParser = require('swagger-parser')
-const ejs = require('ejs')
-const rmdir = require('rmdir')
-const mkdirp = require("mkdirp")
-const fs = require("fs")
-const getDirName = require("path").dirname
-const colors = require('colors')
+import SwaggerParser from "swagger-parser";
+import fs from "fs";
+import ejs = require('ejs')
+import rmdir = require('rmdir')
+import mkdirp = require("mkdirp")
+import getDirName = require("path").dirname
+import colors = require('colors')
 
 const sampleSwagger = "./Swagger.yml"
 const pathTemplate = fs.readFileSync('./templates/path.ejs', 'utf-8')
