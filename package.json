@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "colors": "^1.1.2",
     "ejs": "^2.4.1",
     "mkdirp": "^0.5.1",
     "rmdir": "^1.2.0",
@@ -12,7 +13,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "start" : "node index.js",
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "muukii <muukii.muukii@gmail.com> (http://www.muukii.me/)",
