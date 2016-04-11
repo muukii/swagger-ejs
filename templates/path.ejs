@@ -1,7 +1,96 @@
+<% 
+function protocol(method) {
+  if (method == 'get') {
+    return "GETRequestType"
+  }
+  if (method == 'post') {
+    return "POSTRequestType"
+  }
+  if (method == 'put') {
+    return "PUTRequestType"
+  }
+  if (method == 'delete') {
+    return "DELETERequestType"
+  }
+}
+
+function toSwiftPrameter(parameter) {
+  var name = parameter.name
+  
+  var commonNameMapping = {
+    'integer' : 'Int32',
+    'long' : 'Int64',
+    'float' : 'Float',
+    'double' : 'Double',
+    'string' : 'String',
+    'byte' : 'String',
+    'binary' : 'String',
+    'boolean' : 'Bool',
+    'date' : 'NSDate',
+    'dateTime' : 'NSDate',
+    'password' : 'String'
+  }
+  
+  var nameMapping = {
+    'integer_int32' : 'Int32',
+    'integer_int64' : 'Int64',
+    'number_float' : 'Float',
+    'number_double' : 'Double',
+    'string' : 'String',
+    'boolean' : 'Bool',
+    'string' : 'date',
+    'string' : 'date-time'
+  }
+  
+  var typeString = ""
+  
+  if (parameter.type && parameter.format) {
+    var key = parameter.type + '_' + parameter.format
+    typeString = nameMapping[key] 
+  }
+  
+  if (parameter.type) {
+    var key = parameter.type
+    typeString = commonNameMapping[key]
+  }
+  
+  var optional
+  if (parameter.required) {
+    optional = ''
+  } else {
+    optional = '?'
+  }
+  
+  return 'let ' + name + ': ' + typeString + optional  
+}
+%>
 //
 //  <%= name + ".swift" %>
 //
 //  Created by SwaggerGen
 //
 
+import Foundation
+import SwiftyJSON
 
+public struct <%= name %>: RequestContextType, <%= protocol(method) %>, APISessionRequestType, JSONResponseType {
+<% methodObject.parameters.forEach(function(parameter) { %>    
+    <%= toSwiftPrameter(parameter) -%>
+<% }) %>
+
+    public var path: String {
+      
+    }
+    
+    pulblic var parameterJSON: JSON {
+      
+    }
+    
+    public init() {
+      
+    }
+    
+    public func send() -> Observable() {
+        
+    }
+}

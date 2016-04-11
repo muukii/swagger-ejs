@@ -56,6 +56,23 @@ colors.setTheme({
 console.log("> Launch SwaggerGen\n".info)
 console.log("> Clean up...\n".info)
 
+var input = fs.readFileSync('/dev/stdin', 'utf-8')
+let infos = input.split(/############.+?############/) // #### Model Info ###
+console.log(infos.length)
+console.log(infos)
+let modelInfo = infos[1]
+let operationInfo = infos[2]
+
+console.log(modelInfo)
+
+let model = JSON.parse(modelInfo)
+let operation = JSON.parse(operationInfo) 
+
+// console.log(model)
+// console.log(infos)
+
+return
+
 rmdir('./Generated', (error) => {
   console.log("-> Parse Start".info)
   SwaggerParser.parse(sampleSwagger)
@@ -76,24 +93,30 @@ rmdir('./Generated', (error) => {
       console.log("\n")
 
       console.log("###Paths###\n".info)
-      for (var path in api.paths) {
-        
-        console.log("\n")
-        console.log("> Path: ".info + path.info)
-        console.log("\n")
-        
+      
+      for (var path in api.paths) {  
         let pathObject = api.paths[path]
-        let name = escape(path)
-        
-        let variables = {info: info, path: pathObject, name : name}
-        
-        console.log(JSON.stringify(variables, null, 2))
-        
-        let pathCode = ejs.render(pathTemplate, variables)
-        
-        let writeFilePath = pathWritePath + name + fileExtension
-        
-        writeFile(writeFilePath, pathCode)
+              
+        for (var method in pathObject) {
+          console.log(method)
+          let methodObject = pathObject[method]
+          console.log("\n")
+          console.log("> Path: ".info + path.info)
+          console.log("\n")
+            
+          
+          let name = escape(path)
+           
+          let variables = {info: info, path: path, method: method, methodObject: methodObject, name : name}
+           
+          console.log(JSON.stringify(variables, null, 2))
+            
+          let pathCode = ejs.render(pathTemplate, variables)
+            
+          let writeFilePath = pathWritePath + name + fileExtension
+            
+          writeFile(writeFilePath, pathCode)
+        }
       }
       
       console.log("###Definitions###".info)
