@@ -56,23 +56,6 @@ colors.setTheme({
 console.log("> Launch SwaggerGen\n".info)
 console.log("> Clean up...\n".info)
 
-var input = fs.readFileSync('/dev/stdin', 'utf-8')
-let infos = input.split(/############.+?############/) // #### Model Info ###
-console.log(infos.length)
-console.log(infos)
-let modelInfo = infos[1]
-let operationInfo = infos[2]
-
-console.log(modelInfo)
-
-let model = JSON.parse(modelInfo)
-let operation = JSON.parse(operationInfo) 
-
-// console.log(model)
-// console.log(infos)
-
-return
-
 rmdir('./Generated', (error) => {
   console.log("-> Parse Start".info)
   SwaggerParser.parse(sampleSwagger)

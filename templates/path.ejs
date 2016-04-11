@@ -1,3 +1,4 @@
+<% "use strict"; -%>
 <% 
 function protocol(method) {
   if (method == 'get') {
@@ -14,8 +15,8 @@ function protocol(method) {
   }
 }
 
-function toSwiftPrameter(parameter) {
-  var name = parameter.name
+function toSwiftType(parameter) {
+ 
   
   var commonNameMapping = {
     'integer' : 'Int32',
@@ -52,8 +53,13 @@ function toSwiftPrameter(parameter) {
   if (parameter.type) {
     var key = parameter.type
     typeString = commonNameMapping[key]
-  }
-  
+  }   
+  return typeString
+}
+
+function toSwiftPrameter(parameter) {
+  var name = parameter.name
+  var typeString = toSwiftType(parameter)  
   var optional
   if (parameter.required) {
     optional = ''
@@ -63,7 +69,24 @@ function toSwiftPrameter(parameter) {
   
   return 'let ' + name + ': ' + typeString + optional  
 }
-%>
+
+function toSwiftArg(parameter) {
+  var name = parameter.name
+  var typeString = toSwiftType(parameter)  
+  var optional
+  if (parameter.required) {
+    optional = ''
+  } else {
+    optional = '?'
+  }
+  
+  return name + ': ' + typeString + optional  
+}
+
+function toSwiftPath() {
+  
+}
+-%>
 //
 //  <%= name + ".swift" %>
 //
@@ -74,23 +97,40 @@ import Foundation
 import SwiftyJSON
 
 public struct <%= name %>: RequestContextType, <%= protocol(method) %>, APISessionRequestType, JSONResponseType {
-<% methodObject.parameters.forEach(function(parameter) { %>    
+<% methodObject.parameters.forEach((parameter) => { -%>    
     <%= toSwiftPrameter(parameter) -%>
 <% }) %>
 
     public var path: String {
-      
+<% var pathParameters = methodObject.parameters.filter((value) => { return value.in == 'path' }) -%>  
+<% if (pathParameters.length > 0) { -%>
+        var path = "<%= path -%>"
+<% for (key in pathParameters) { -%>
+<% var pathParameter = pathParameters[key] -%>
+        path = path.stringByReplacingOccurrencesOfString("{<%= pathParameter.name -%>}", withString: "\(self.<%= pathParameter.name -%>)", options: .LiteralSearch, range: nil)
+<% } -%>
+        return path
+<% } else { -%>
+        return "<%= path -%>"
+<% } -%>
     }
     
-    pulblic var parameterJSON: JSON {
-      
+    public var parameterJSON: JSON {
+        var params = [String: JSON]()
+<% var queryParameters = methodObject.parameters.filter((value) => { return value.in == 'query' }) -%>
+<% queryParameters.forEach((query) => { -%>
+        params["<%= query.name -%>"] = JSON(self.<%= query.name -%>)
+<% }) -%>
+        return params
     }
     
-    public init() {
-      
+    public init(<%= methodObject.parameters.map((parameter) => { return toSwiftArg(parameter)}).join(', ') -%>) {
+<% methodObject.parameters.forEach((parameter) => { -%>
+        self.<%= parameter.name -%> = <%= parameter.name -%> 
+<% }) -%>
     }
     
-    public func send() -> Observable() {
-        
+    public func send() -> Observable(JSON) {
+        return self.resume()
     }
 }
