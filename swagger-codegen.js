@@ -8,11 +8,10 @@ const fs = require("fs")
 const getDirName = require("path").dirname
 const colors = require('colors')
 
-const sampleSwagger = "./Swagger.yml"
-const pathTemplate = fs.readFileSync('./templates/path.ejs', 'utf-8')
+const operationTemplate = fs.readFileSync('./templates/operation.ejs', 'utf-8')
 const modelTemplate = fs.readFileSync('./templates/model.ejs', 'utf-8')
 
-const pathWritePath = "./Generated/Paths/"
+const operationWritePath = "./Generated/Operations/"
 const modelWritePath = "./Generated/Models/"
 const fileExtension = ".swift"
 
@@ -39,6 +38,10 @@ function escape(string) {
     }
     return name
 }
+
+function prettyJSON(object) {
+  console.log(JSON.stringify(object, null, 2))
+}
  
 colors.setTheme({
   silly: 'rainbow',
@@ -56,17 +59,41 @@ colors.setTheme({
 console.log("> Launch SwaggerGen\n".info)
 console.log("> Clean up...\n".info)
 
-var input = fs.readFileSync('/dev/stdin', 'utf-8')
-let infos = input.split(/############.+?############/) // #### Model Info ###
-console.log(infos.length)
-console.log(infos)
-let modelInfo = infos[1]
-let operationInfo = infos[2]
+let input = fs.readFileSync('/dev/stdin', 'utf-8')
+// console.log(input)
+let json = JSON.parse(input)
+let models = json.models
+let operations = json.operations
 
-console.log(modelInfo)
+// console.log(JSON.stringify(models, null, 2))
+// console.log(JSON.stringify(operations, null, 2))
 
-let model = JSON.parse(modelInfo)
-let operation = JSON.parse(operationInfo) 
+rmdir('./Generated', (error) => {
+  
+  console.log("-> Parse Start".info)
 
-// console.log(model)
-// console.log(infos)
+  operations.forEach((operation) => {
+    
+    operation.operations.operation.forEach((operation) => {
+      console.log("> Operation\n".info)
+      let name = escape(operation.path)
+      let variables = operation
+      prettyJSON(variables)    
+      let text = ejs.render(operationTemplate, variables)
+    
+      let writeFilePath = operationWritePath + name + fileExtension
+      writeFile(writeFilePath, text) 
+    })      
+  })
+  
+  models.forEach((model) => {
+    console.log("> Model\n".info)  
+    let name = model.model.name 
+    let variables = model
+    prettyJSON(variables)
+    let text = ejs.render(operationTemplate, variables)  
+    let writeFilePath = modelWritePath + name + fileExtension
+        writeFile(writeFilePath, text)
+  })
+  
+})
