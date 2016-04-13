@@ -3,3 +3,5 @@ node_modules
 Generated/
 typings/
 SwaggerClient
+.log
+npm-debug.log

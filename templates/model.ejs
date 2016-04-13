@@ -29,9 +29,9 @@ public struct <%= name -%>: _InitializableFromJSON, _EncodableToJSON {
         
 <%  model.vars.forEach((v) => { -%>
         if let value = self.<%= v.name -%> {
-            json[<%=  v.name  -%>] = JSON(value) // TODO: Array
+            json["<%=  v.nameName  -%>"] = JSON(value) // TODO: Array
         } else {
-            json[<%=  v.name  -%>] = JSON(NSNull())
+            json["<%=  v.baseName  -%>"] = JSON(NSNull())
         }
 <%  }) -%>
         return JSON(json)
