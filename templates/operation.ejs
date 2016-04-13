@@ -1,4 +1,86 @@
+//
+//  <%= name + ".swift" %>
+//
+//  Created by SwaggerGen
+//
 
+public struct <%= name + httpMethod %>: RequestContextType, <%= getMethodProtocol(httpMethod) %>, APISessionRequestType, JSONResponseType {  
+  <% allParams.forEach((parameter) => { -%>    
+    <%= getParameter(parameter) %>
+<% }) -%>
+
+    public var path: String {
+<% if (pathParams.length > 0) { -%>
+        var path = "<%= path -%>"
+<% pathParams.forEach((param) => { -%>
+        path = path.stringByReplacingOccurrencesOfString("{<%= param.paramName -%>}", withString: "\(self.<%= param.paramName -%>)", options: .LiteralSearch, range: nil)
+<% }) -%>
+        return path
+<% } else { -%>
+        return "<%= path -%>"
+<% } -%>
+    }
+    
+    public var parameterJSON: JSON {
+        var params = [String: JSON]()
+<% queryParams.forEach((query) => { -%>
+        params["<%= query.baseName -%>"] = JSON(self.<%= query.paramName -%>)
+<% }) -%>
+<% bodyParams.forEach((query) => { -%>
+        params["<%= query.baseName -%>"] = JSON(self.<%= query.paramName -%>)
+<% }) -%>
+        return params
+    }
+    
+    public init(<%= allParams.map((parameter) => { return getArgs(parameter)}).join(', ') -%>) {
+<% allParams.forEach((parameter) => { -%>
+        self.<%= parameter.paramName -%> = <%= parameter.paramName -%> 
+<% }) -%>
+    }
+    
+    public func send() -> Observable(JSON) {
+        return self.resume()
+    }
+}
+
+
+<%
+function getMethodProtocol(method) {
+  if (method == 'GET') {
+    return "GETRequestType"
+  }
+  if (method == 'POST') {
+    return "POSTRequestType"
+  }
+  if (method == 'PUT') {
+    return "PUTRequestType"
+  }
+  if (method == 'DELETE') {
+    return "DELETERequestType"
+  }
+}
+
+function getParameter(p) {
+  if (p.isRequired) {
+    return 'let ' + p.paramName + ': ' + p.dataType + '?'
+  } else {
+    return 'let ' + p.paramName + ': ' + p.dataType
+  }
+}
+
+function getArgs(p) {
+  if (p.isRequired) {
+    return p.paramName + ': ' + p.dataType + '?'
+  } else {
+    return p.paramName + ': ' + p.dataType
+  }
+}
+
+function getPath() {
+  
+}
+
+%>
 
 <%# Example JSON
 { 
