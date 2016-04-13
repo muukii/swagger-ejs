@@ -12,13 +12,10 @@ public struct <%= name -%>: _InitializableFromJSON, _EncodableToJSON {
 
     public init(json: JSON) throws {
 <%  model.vars.forEach((v) => { -%>
-<%    switch (v.dataType) {
-<%      case 'String':%>  
-<%  }  %>
-        try self.<%= v.name -%> = json["<%= v.name %>"]
+        try self.<%= v.name -%> = json["<%= v.name %>"].<%= getJSONGetter(v.datatype) %>
 <%  }) -%>              
     }
-    public init(<%= model.vars.map((v) => { return v.name + ": " + v.dataType }).join(', ') -%>){
+    public init(<%= model.vars.map((v) => { return v.name + ": " + v.datatype }).join(', ') -%>){
 <%  model.vars.forEach((v) => { -%>
         self.<%= v.name -%> = <%= v.name %>
 <%  }) -%>
@@ -38,6 +35,37 @@ public struct <%= name -%>: _InitializableFromJSON, _EncodableToJSON {
     }
 }
 
+<%
+function getJSONGetter(dataType) {
+  switch (dataType) {
+    case 'String':
+      return 'getString()'
+      break
+    case 'Int':
+      return 'getInt()'
+      break
+    case 'Int32':
+      return 'getInt32()'
+      break
+    case 'Int64':
+      return 'getInt64()'
+      break
+    case 'Double':
+      return 'getDouble()'
+      break
+    case 'Float':
+      return 'getFloat()'
+      break
+    case 'Bool':
+      return 'getBool()'
+      break
+    case 'NSDate':
+      return 'getNSDate()'
+      break   
+  }
+  return dataType
+}
+%>
 
 <%# Example JSON
 {
