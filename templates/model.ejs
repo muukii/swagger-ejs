@@ -7,12 +7,12 @@
 public struct <%= name -%>: _InitializableFromJSON, _EncodableToJSON {
     
 <%  model.vars.forEach((v) => {  -%>
-    var <%= v.name %>: <%= v.dataType %>?
+    var <%= v.name %>: <%= v.datatype %>?
 <%  })  -%>
 
     public init(json: JSON) throws {
 <%  model.vars.forEach((v) => { -%>
-        try self.<%= v.name -%> = json["<%= v.name %>"].<%= getJSONGetter(v.datatype) %>
+        try self.<%= v.name -%> = json["<%= v.name %>"].<%= getJSONGetter(v) %>
 <%  }) -%>              
     }
     public init(<%= model.vars.map((v) => { return v.name + ": " + v.datatype }).join(', ') -%>){
@@ -36,8 +36,20 @@ public struct <%= name -%>: _InitializableFromJSON, _EncodableToJSON {
 }
 
 <%
-function getJSONGetter(dataType) {
-  switch (dataType) {
+function getJSONGetter(v) {
+    
+  var datatype = v.datatype
+  
+  if (v.complexType) {
+    
+    if (v.baseType == 'Array') {
+      return "getObject(" + v.complexType + ")"
+    } else {
+      return "getObjects(" + v.complexType + ")"
+    }
+  }
+  
+  switch (datatype) {
     case 'String':
       return 'getString()'
       break

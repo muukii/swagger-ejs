@@ -94,7 +94,7 @@ rmdir('./Generated', (error) => {
     let name = model.model.name 
     let variables = model
     variables.name = name
-    // prettyJSON(variables)
+    prettyJSON(variables)
     let text = ejs.render(modelTemplate, variables)
     // console.log(operationTemplate)
     // console.log(text)  
