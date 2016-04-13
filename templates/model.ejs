@@ -6,4 +6,206 @@
 
 public struct <%= name -%>: _InitializableFromJSON, _EncodableToJSON {
     
+<%  model.vars.forEach((v) => {  -%>
+    var <%= v.name %>: <%= v.dataType %>?
+<%  })  -%>
+
+    public init(json: JSON) throws {
+<%  model.vars.forEach((v) => { -%>
+<%    switch (v.dataType) {
+<%      case 'String':%>  
+<%  }  %>
+        try self.<%= v.name -%> = json["<%= v.name %>"]
+<%  }) -%>              
+    }
+    public init(<%= model.vars.map((v) => { return v.name + ": " + v.dataType }).join(', ') -%>){
+<%  model.vars.forEach((v) => { -%>
+        self.<%= v.name -%> = <%= v.name %>
+<%  }) -%>
+    }
+    
+    public func toJSON() -> JSON {
+        var json = [String : JSON]()
+        
+<%  model.vars.forEach((v) => { -%>
+        if let value = self.<%= v.name -%> {
+            json[<%=  v.name  -%>] = JSON(value) // TODO: Array
+        } else {
+            json[<%=  v.name  -%>] = JSON(NSNull())
+        }
+<%  }) -%>
+        return JSON(json)
+    }
 }
+
+
+<%# Example JSON
+{
+  "importPath": "/Models.UserLinks",
+  "model": {
+    "name": "UserLinks",
+    "classname": "UserLinks",
+    "classVarName": "userLinks",
+    "modelJson": "{\n  \"type\" : \"object\",\n  \"properties\" : {\n    \"self\" : {\n      \"type\" : \"string\"\n    },\n    \"html\" : {\n      \"type\" : \"string\"\n    },\n    \"photos\" : {\n      \"type\" : \"string\"\n    },\n    \"likes\" : {\n      \"type\" : \"string\"\n    }\n  }\n}",
+    "classFilename": "UserLinks",
+    "vars": [
+      {
+        "baseName": "self",
+        "getter": "getSelf",
+        "setter": "setSelf",
+        "datatype": "String",
+        "datatypeWithEnum": "String",
+        "name": "_self",
+        "defaultValueWithParam": " = data.self;",
+        "baseType": "String",
+        "example": "null",
+        "jsonSchema": "{\n  \"type\" : \"string\"\n}",
+        "hasMore": true,
+        "hasMoreNonReadOnly": true,
+        "isPrimitiveType": true,
+        "isNotContainer": true,
+        "isString": true,
+        "isEnum": false,
+        "vendorExtensions": {}
+      },
+      {
+        "baseName": "html",
+        "getter": "getHtml",
+        "setter": "setHtml",
+        "datatype": "String",
+        "datatypeWithEnum": "String",
+        "name": "html",
+        "defaultValueWithParam": " = data.html;",
+        "baseType": "String",
+        "example": "null",
+        "jsonSchema": "{\n  \"type\" : \"string\"\n}",
+        "hasMore": true,
+        "hasMoreNonReadOnly": true,
+        "isPrimitiveType": true,
+        "isNotContainer": true,
+        "isString": true,
+        "isEnum": false,
+        "vendorExtensions": {}
+      },
+      {
+        "baseName": "photos",
+        "getter": "getPhotos",
+        "setter": "setPhotos",
+        "datatype": "String",
+        "datatypeWithEnum": "String",
+        "name": "photos",
+        "defaultValueWithParam": " = data.photos;",
+        "baseType": "String",
+        "example": "null",
+        "jsonSchema": "{\n  \"type\" : \"string\"\n}",
+        "hasMore": true,
+        "hasMoreNonReadOnly": true,
+        "isPrimitiveType": true,
+        "isNotContainer": true,
+        "isString": true,
+        "isEnum": false,
+        "vendorExtensions": {}
+      },
+      {
+        "baseName": "likes",
+        "getter": "getLikes",
+        "setter": "setLikes",
+        "datatype": "String",
+        "datatypeWithEnum": "String",
+        "name": "likes",
+        "defaultValueWithParam": " = data.likes;",
+        "baseType": "String",
+        "example": "null",
+        "jsonSchema": "{\n  \"type\" : \"string\"\n}",
+        "isPrimitiveType": true,
+        "isNotContainer": true,
+        "isString": true,
+        "isEnum": false,
+        "vendorExtensions": {}
+      }
+    ],
+    "allVars": [
+      {
+        "baseName": "self",
+        "getter": "getSelf",
+        "setter": "setSelf",
+        "datatype": "String",
+        "datatypeWithEnum": "String",
+        "name": "_self",
+        "defaultValueWithParam": " = data.self;",
+        "baseType": "String",
+        "example": "null",
+        "jsonSchema": "{\n  \"type\" : \"string\"\n}",
+        "hasMore": true,
+        "hasMoreNonReadOnly": true,
+        "isPrimitiveType": true,
+        "isNotContainer": true,
+        "isString": true,
+        "isEnum": false,
+        "vendorExtensions": {}
+      },
+      {
+        "baseName": "html",
+        "getter": "getHtml",
+        "setter": "setHtml",
+        "datatype": "String",
+        "datatypeWithEnum": "String",
+        "name": "html",
+        "defaultValueWithParam": " = data.html;",
+        "baseType": "String",
+        "example": "null",
+        "jsonSchema": "{\n  \"type\" : \"string\"\n}",
+        "hasMore": true,
+        "hasMoreNonReadOnly": true,
+        "isPrimitiveType": true,
+        "isNotContainer": true,
+        "isString": true,
+        "isEnum": false,
+        "vendorExtensions": {}
+      },
+      {
+        "baseName": "photos",
+        "getter": "getPhotos",
+        "setter": "setPhotos",
+        "datatype": "String",
+        "datatypeWithEnum": "String",
+        "name": "photos",
+        "defaultValueWithParam": " = data.photos;",
+        "baseType": "String",
+        "example": "null",
+        "jsonSchema": "{\n  \"type\" : \"string\"\n}",
+        "hasMore": true,
+        "hasMoreNonReadOnly": true,
+        "isPrimitiveType": true,
+        "isNotContainer": true,
+        "isString": true,
+        "isEnum": false,
+        "vendorExtensions": {}
+      },
+      {
+        "baseName": "likes",
+        "getter": "getLikes",
+        "setter": "setLikes",
+        "datatype": "String",
+        "datatypeWithEnum": "String",
+        "name": "likes",
+        "defaultValueWithParam": " = data.likes;",
+        "baseType": "String",
+        "example": "null",
+        "jsonSchema": "{\n  \"type\" : \"string\"\n}",
+        "isPrimitiveType": true,
+        "isNotContainer": true,
+        "isString": true,
+        "isEnum": false,
+        "vendorExtensions": {}
+      }
+    ],
+    "mandatory": [],
+    "allMandatory": [],
+    "imports": [],
+    "hasVars": true,
+    "hasEnums": false,
+    "vendorExtensions": {}
+  }
+}
+%>

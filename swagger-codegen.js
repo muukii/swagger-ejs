@@ -11,6 +11,8 @@ const colors = require('colors')
 const operationTemplate = fs.readFileSync('./templates/operation.ejs', 'utf-8')
 const modelTemplate = fs.readFileSync('./templates/model.ejs', 'utf-8')
 
+console.log(operationTemplate)
+
 const operationWritePath = "./Generated/Operations/"
 const modelWritePath = "./Generated/Models/"
 const fileExtension = ".swift"
@@ -71,14 +73,15 @@ let operations = json.operations
 rmdir('./Generated', (error) => {
   
   console.log("-> Parse Start".info)
-
-  operations.forEach((operation) => {
+  // console.log(operations)
+  operations.forEach((operation) => {    
     
     operation.operations.operation.forEach((operation) => {
       console.log("> Operation\n".info)
       let name = escape(operation.path)
-      let variables = operation
-      prettyJSON(variables)    
+      var variables = operation
+      variables.name = name
+      // prettyJSON(variables)    
       let text = ejs.render(operationTemplate, variables)
     
       let writeFilePath = operationWritePath + name + fileExtension
@@ -90,8 +93,11 @@ rmdir('./Generated', (error) => {
     console.log("> Model\n".info)  
     let name = model.model.name 
     let variables = model
-    prettyJSON(variables)
-    let text = ejs.render(operationTemplate, variables)  
+    variables.name = name
+    // prettyJSON(variables)
+    let text = ejs.render(modelTemplate, variables)
+    // console.log(operationTemplate)
+    // console.log(text)  
     let writeFilePath = modelWritePath + name + fileExtension
         writeFile(writeFilePath, text)
   })

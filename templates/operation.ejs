@@ -1,0 +1,144 @@
+
+
+<%# Example JSON
+{ 
+  "responseHeaders": [],
+  "hasConsumes": false,
+  "hasProduces": false,
+  "hasParams": true,
+  "hasOptionalParams": true,
+  "isListContainer": true,
+  "hasMore": true,
+  "isResponseBinary": false,
+  "hasReference": true,
+  "path": "/photos",
+  "operationId": "photosGet",
+  "returnType": "[Photos]",
+  "httpMethod": "GET",
+  "returnBaseType": "Photos",
+  "returnContainer": "array",
+  "notes": "Get a single page from the list of all photos.",
+  "baseName": "Default",
+  "allParams": [
+    {
+      "isQueryParam": true,
+      "hasMore": true,
+      "baseName": "page",
+      "paramName": "page",
+      "dataType": "Int32",
+      "description": "Page number to retrieve. (Optional, default: 1)",
+      "jsonSchema": "{\n  \"name\" : \"page\",\n  \"in\" : \"query\",\n  \"description\" : \"Page number to retrieve. (Optional, default: 1)\",\n  \"required\" : false,\n  \"type\" : \"integer\"\n}",
+      "isEnum": false,
+      "vendorExtensions": {}
+    },
+    {
+      "isQueryParam": true,
+      "hasMore": true,
+      "secondaryParam": true,
+      "baseName": "per_page",
+      "paramName": "perPage",
+      "dataType": "Int32",
+      "description": "Number of items per page. (Optional; default: 10)",
+      "jsonSchema": "{\n  \"name\" : \"per_page\",\n  \"in\" : \"query\",\n  \"description\" : \"Number of items per page. (Optional; default: 10)\",\n  \"required\" : false,\n  \"type\" : \"integer\"\n}",
+      "isEnum": false,
+      "vendorExtensions": {}
+    },
+    {
+      "isQueryParam": true,
+      "secondaryParam": true,
+      "baseName": "order_by",
+      "paramName": "orderBy",
+      "dataType": "Int32",
+      "description": "How to sort the photos. Optional. (Valid values: latest, oldest, popular; default: latest)",
+      "jsonSchema": "{\n  \"name\" : \"order_by\",\n  \"in\" : \"query\",\n  \"description\" : \"How to sort the photos. Optional. (Valid values: latest, oldest, popular; default: latest)\",\n  \"required\" : false,\n  \"type\" : \"integer\"\n}",
+      "isEnum": false,
+      "vendorExtensions": {}
+    }
+  ],
+  "bodyParams": [],
+  "pathParams": [],
+  "queryParams": [
+    {
+      "isQueryParam": true,
+      "hasMore": true,
+      "baseName": "page",
+      "paramName": "page",
+      "dataType": "Int32",
+      "description": "Page number to retrieve. (Optional, default: 1)",
+      "jsonSchema": "{\n  \"name\" : \"page\",\n  \"in\" : \"query\",\n  \"description\" : \"Page number to retrieve. (Optional, default: 1)\",\n  \"required\" : false,\n  \"type\" : \"integer\"\n}",
+      "isEnum": false,
+      "vendorExtensions": {}
+    },
+    {
+      "isQueryParam": true,
+      "hasMore": true,
+      "secondaryParam": true,
+      "baseName": "per_page",
+      "paramName": "perPage",
+      "dataType": "Int32",
+      "description": "Number of items per page. (Optional; default: 10)",
+      "jsonSchema": "{\n  \"name\" : \"per_page\",\n  \"in\" : \"query\",\n  \"description\" : \"Number of items per page. (Optional; default: 10)\",\n  \"required\" : false,\n  \"type\" : \"integer\"\n}",
+      "isEnum": false,
+      "vendorExtensions": {}
+    },
+    {
+      "isQueryParam": true,
+      "secondaryParam": true,
+      "baseName": "order_by",
+      "paramName": "orderBy",
+      "dataType": "Int32",
+      "description": "How to sort the photos. Optional. (Valid values: latest, oldest, popular; default: latest)",
+      "jsonSchema": "{\n  \"name\" : \"order_by\",\n  \"in\" : \"query\",\n  \"description\" : \"How to sort the photos. Optional. (Valid values: latest, oldest, popular; default: latest)\",\n  \"required\" : false,\n  \"type\" : \"integer\"\n}",
+      "isEnum": false,
+      "vendorExtensions": {}
+    }
+  ],
+  "headerParams": [],
+  "formParams": [],
+  "tags": [
+    "Default"
+  ],
+  "responses": [
+    {
+      "headers": [],
+      "code": "200",
+      "message": "Success",
+      "hasMore": false,
+      "dataType": "[Photos]",
+      "baseType": "Photos",
+      "containerType": "array",
+      "isDefault": true,
+      "simpleType": false,
+      "primitiveType": false,
+      "isMapContainer": false,
+      "isListContainer": false,
+      "isBinary": false,
+      "schema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/Photos"
+        }
+      },
+      "jsonSchema": "{\n  \"description\" : \"Success\",\n  \"schema\" : {\n    \"type\" : \"array\",\n    \"items\" : {\n      \"$ref\" : \"#/definitions/Photos\"\n    }\n  }\n}",
+      "wildcard": false
+    }
+  ],
+  "imports": [
+    "Photos"
+  ],
+  "examples": [
+    {
+      "contentType": "application/json",
+      "example": "[ {\n  \"urls\" : {\n    \"small\" : \"aeiou\",\n    \"thumb\" : \"aeiou\",\n    \"raw\" : \"aeiou\",\n    \"regular\" : \"aeiou\",\n    \"full\" : \"aeiou\"\n  },\n  \"color\" : \"aeiou\",\n  \"width\" : \"\",\n  \"links\" : {\n    \"download\" : \"aeiou\",\n    \"self\" : \"aeiou\",\n    \"html\" : \"aeiou\"\n  },\n  \"id\" : \"aeiou\",\n  \"categories\" : [ {\n    \"photo_count\" : \"\",\n    \"links\" : {\n      \"self\" : \"aeiou\",\n      \"photos\" : \"aeiou\"\n    },\n    \"id\" : \"\",\n    \"title\" : \"aeiou\"\n  } ],\n  \"liked_by_user\" : true,\n  \"user\" : {\n    \"profile_image\" : {\n      \"small\" : \"aeiou\",\n      \"large\" : \"aeiou\",\n      \"medium\" : \"aeiou\"\n    },\n    \"name\" : \"aeiou\",\n    \"links\" : {\n      \"self\" : \"aeiou\",\n      \"html\" : \"aeiou\",\n      \"photos\" : \"aeiou\",\n      \"likes\" : \"aeiou\"\n    },\n    \"id\" : \"aeiou\",\n    \"username\" : \"aeiou\"\n  },\n  \"height\" : \"\",\n  \"likes\" : \"\"\n} ]"
+    }
+  ],
+  "vendorExtensions": {},
+  "nickname": "photosGet",
+  "operationIdLowerCase": "photosget",
+  "hasBodyParam": false,
+  "hasQueryParams": true,
+  "hasHeaderParams": false,
+  "hasPathParams": false,
+  "hasFormParams": false
+}
+%>
