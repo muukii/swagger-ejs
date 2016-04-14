@@ -13,107 +13,63 @@ import RxSwift
 
 public struct <%= name + httpMethod %>: RequestContextType, <%= getMethodProtocol(httpMethod) %>, APISessionRequestType, JSONResponseType {
 
-<%
-  allParams.forEach((p) => {
--%>
+<%  allParams.forEach((p) => { -%>
     let <%= p.paramName %>: <%= p.dataType %><%= p.required ? '' : '?' %>
-<%
-  })
--%>
-
+<%  }) -%>
     public var path: String {
-<%
-    if (hasPathParams) {
--%>
+<%  if (hasPathParams) { -%>
         var path = "<%= path %>"
-<%
-        pathParams.forEach((pathParam) => {
--%>
+<%      pathParams.forEach((pathParam) => { -%>
         path = path.stringByReplacingOccurrencesOfString("{<%= pathParam.paramName %>}", withString: "\(self.<%= pathParam.paramName %>)", options: .LiteralSearch, range: nil)
-<%
-        })
--%>
+<%      }) -%>
         return path
-<%
-    } else {
--%>
+<%  } else { -%>
         return "<%= path %>"
-<%
+<%  } -%>
     }
--%>
-    }
-
     public var parameterJSON: JSON {
-<%
-    if (hasBodyParam) {
-        var param = head(hasBodyParam)
--%>
+<%  if (hasBodyParam) { -%>
+<%      var param = head(hasBodyParam) -%>
         return self.<%= param.paramName %>.toJSON()
-<%
-    } else {
--%>
+<%  } else { -%>
         var params = [String: JSON]()
-<%
-        allParams.forEach((param) => {
-            if (!param.isPathParam) {
-                if (param.required) {
--%>
+<%      allParams.forEach((param) => { -%>
+<%          if (!param.isPathParam) { -%>
+<%               if (param.required) { -%>
         params["<%= param.baseName %>"] = JSON(self.<%= param.baseName %>)
-<%
-                } else {
--%>
+<%               } else { -%>
         params["<%= param.baseName %>"] = JSON(NSNull())
-<%
-                }
-            }
-        })
--%>
+<%               } -%>
+<%          } -%>
+<%      }) -%>
         return JSON(params)
-<%
-    } // if (hasBodyParam)
--%>
+<%  } -%>
     }
-
     public init(
-<%
-    allParams.forEach((param) => {
--%>
+<%  allParams.forEach((param) => { -%>
         <%= param.paramName %>: <%= param.dataType %><%= param.required ? '' : '?' %><%= param.hasMore ? ', ' : '' %>
-<%
-    })
--%>
+<%  }) -%>
     ) {
-<%
-    allParams.forEach((param) => {
--%>
+<%  allParams.forEach((param) => { -%>
         self.<%= param.paramName %> = <%= param.paramName %>
-<%
-    })
--%>
+<%  }) -%>
     }
 
     public func send() -> Observable<<%= returnType ? returnType : 'JSON' %>> {
-<%
-    if (returnType) {
-        if (typeof returnContainer !== 'undefined' && returnContainer === 'array') {
--%>
+<%  if (returnType) { -%>
+<%      if (typeof returnContainer !== 'undefined' && returnContainer === 'array') { -%>
         return self.resume().map { arrayJSON in
             return arrayJSON.array?.flatMap { try? <%= returnBaseType %>(json: $0) } ?? [<%= returnBaseType %>]()
         }
-<%
-        } else {
--%>
-        return self.resume().map { try <%= returnType %>(json: $0) }
-<%
-        }
-    } else {
--%>
+<%      } else { -%>
+        return self.resume().map { try <%= returnType -%>(json: $0) }
+<%      } -%>
+<%  } else { -%>
         return self.resume()
-<%
-    }
--%>
+<%  } -%>
     }
 }
+
 <%
 function getMethodProtocol(method) {
   if (method == 'GET') {
@@ -147,7 +103,7 @@ function getArgs(p) {
 }
 
 function getPath() {
-  
+
 }
 
 -%>
