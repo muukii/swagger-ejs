@@ -8,20 +8,13 @@ import Foundation
 import SwiftyJSON
 
 public struct <%= model .classname %>: _InitializableFromJSON, _EncodableToJSON {
-    
-<%
-    model.vars.forEach((v) => {
-        if (v.isEnum) {
--%>
-    public enum <%= v.datatypeWithEnum %>: String, _InitializableFromJSON, _EncodableToJSON {
-<%
-        v.allowableValues.values.forEach((val) => {
--%>
-        case <%= val.enum %> = "<%= val.raw  %>"
-<%
-        })
--%>
 
+<%  model.vars.forEach((v) => { -%>
+<%      if (v.isEnum) { -%>
+    public enum <%= v.datatypeWithEnum %>: String, _InitializableFromJSON, _EncodableToJSON {
+<%          v.allowableValues.values.forEach((val) => { -%>
+        case <%= val.enum %> = "<%= val.raw  %>"
+<%  }) -%>
         public init(json: JSON) throws {
             let rawValue = try json.get<%= v.datatype %>()
             guard let value = <%= v.datatypeWithEnum %>(rawValue: rawValue) else {
@@ -34,200 +27,125 @@ public struct <%= model .classname %>: _InitializableFromJSON, _EncodableToJSON 
             return JSON(self.rawValue)
         }        
     }
-<%
-        }
-    })
-
-    model.vars.forEach((v) => {
--%>
-    <% if (v.description) { %>/** <%= description %> */<% } %>
-<%
-        if (v.isEnum) {
--%>
-    public var <%= v.name %>: <%= v.datatypeWithEnum %><%= v.required ? '' : '?' %><% if (v.defaultValue) { %> = <%= v.defaultValue %><% } -%>
-<%
-        } else {
--%>
-    public var <%= v.name %>: <%= v.datatype %><%= v.required ? '' : '?' %><% if (v.defaultValue) { %> = <%= v.defaultValue %><% } -%>
-<%
-        }
-    })
--%>
-
+<%      } -%>
+<%  }) -%>
+<%  model.vars.forEach((v) => { -%>
+<%      if (v.description) { -%>
+    /** <%= description %> */
+<%      } -%>
+<%      if (v.isEnum) { -%>
+    public var <%= v.name %>: <%= v.datatypeWithEnum %><%= v.required ? '' : '?' %><% if (v.defaultValue) { %> = <%= v.defaultValue %><% } %>
+<%      } else { -%>
+    public var <%= v.name %>: <%= v.datatype %><%= v.required ? '' : '?' %><% if (v.defaultValue) { %> = <%= v.defaultValue %><% } %>
+<%      } -%>
+<%  }) -%>
 
     public init(json: JSON) throws {
-<%
-    model.vars.forEach((v) => {
-        if (v.isContainer) {
-            if (v.isRequired) {
-                if (v.isPrimitiveType) {
--%>
+<%  model.vars.forEach((v) => { -%>
+<%      if (v.isContainer) { -%>
+<%          if (v.isRequired) { -%>
+<%              if (v.isPrimitiveType) { -%>
         self.<%= v.name %> = try json["<%= baseName %>"].get<%= v.items.baseType %>Array()
-<%
-                } else {
--%>
+<%              } else { -%>
         self.<%= v.name %> = try json["<%= baseName %>"].getObjects(<%= v.complexType %>)
-<%
-                }
-            } else {
-                if (v.isPrimitiveType) {
--%>
+<%              } -%>
+<%          } else { -%>
+<%              if (v.isPrimitiveType) { -%>
         self.<%= v.name %> = json["<%= v.baseName %>"].getOptional<%= v.items.baseType %>Array()
-<%
-                } else {
--%>
+<%              } else { -%>
         self.<%= v.name %> = try json["<%= v.baseName %>"].getOptionalObjects(<%= v.complexType %>)
-<%
-                }
-            }
-        } else {
-            if (v.isRequired) {
-                if (v.isPrimitiveType) {
-                    if (v.isEnum) {
--%>
+<%              } -%>
+<%          } -%>
+<%      } else { -%>
+<%          if (v.isRequired) { -%>
+<%              if (v.isPrimitiveType) { -%>
+<%                  if (v.isEnum) { -%>
         self.<%= v.name %> = json["<%= v.baseName %>"].getObject(<%= v.datatypeWithEnum %>)
-<%
-                    } else {
--%>
+<%                  } else { -%>
         self.<%= v.name %> = try json["<%= v.baseName %>"].get<%= v.datatype %>()
-<%
-                    }
-                } else {
--%>
+<%                  } -%>
+<%              } else { -%>
         self.<%= v.name %> = json["<%= v.baseName %>"].getObject(<%= v.complexType %>)
-<%
-                }
-            } else {
-                if (v.isPrimitiveType) {
-                    if (v.isEnum) {
--%>
+<%              } -%>
+<%          } else { -%>
+<%              if (v.isPrimitiveType) { -%>
+<%                  if (v.isEnum) { -%>
         self.<%= v.name %> = try json["<%= v.baseName %>"].getOptionalObject(<%= v.datatypeWithEnum %>)
-<%
-                    } else {
--%>
+<%                  } else { -%>
         self.<%= v.name %> = json["<%= v.baseName %>"].getOptional<%= v.datatype %>()
-<%
-                    }
-                } else {
--%>
+<%                  } -%>
+<%              } else { -%>
         self.<%= v.name %> = try json["<%= v.baseName %>"].getOptionalObject(<%= v.complexType %>)
-<%
-                }
-            }
-        }
-    });
--%>
+<%              } -%>
+<%          } -%>
+<%      } -%>
+<%  }); -%>
     }
 
     public init(
-<%
-    model.vars.forEach((v) => {
-        if (v.isEnum) {
--%>
+<%  model.vars.forEach((v) => { -%>
+<%      if (v.isEnum) { -%>
         <%= v.name %>: <%= v.datatypeWithEnum %><%= v.required ? '' : '?' %><% if (v.defaultValue) { %> = <%= v.defaultValue %><% } -%>
-<%
-        } else {
--%>
+<%      } else { -%>
         <%= v.name %>: <%= v.datatype %><%= v.required ? '' : '?' %><% if (v.defaultValue) { %> = <%= v.defaultValue %><% } -%>
-<%
-        }
--%>
+<%      } -%>
 <%= v.hasMore ? ',' : '' %>
-<%
-    })
--%>
+<%  }) -%>
     ) {
-<%
-    model.vars.forEach((v) => {
--%>
+<%  model.vars.forEach((v) => { -%>
         self.<%= v.name %> = <%= v.name %>
-<%
-    })
--%>
+<%  }) -%>
     }
 
     public func toJSON() -> JSON {
         
         var json = [String: JSON]()
 
-<%
-    model.vars.forEach((v) => {
-        if (v.isContainer) {
-            if (v.required) {
--%>
+<%  model.vars.forEach((v) => { -%>
+<%      if (v.isContainer) { -%>
+<%          if (v.required) { -%>
         json["<%= v.baseName %>"] = JSON(self.<%= v.name %>.map {
-<%
-                if (v.isPrimitiveType) {
--%>
+<%              if (v.isPrimitiveType) { -%>
         <%= v.isEnum ? '$0.toJSON()' : 'JSON($0)' %>
-<%
-                } else {
--%>
+<%              } else { -%>
         $0.toJSON()
-<%
-                }
--%>
+<%              } -%>
         })
-<%
-            } else { // if (v.required)
--%>
+<%           } else { // if (v.required) -%>
         if let value = self.<%= v.name %> {
             json["<%= v.baseName %>"] = JSON(value.map {
-<%
-                if (v.isPrimitiveType) {
--%>
+<%               if (v.isPrimitiveType) { -%>
                 <%= v.isEnum ? '$0.toJSON()' : 'JSON($0)' %>
-<%
-                } else {
--%>
+<%               } else { -%>
                 $0.toJSON()
-<%
-                }
--%>
+<%               } -%>
             })
         } else {
             json["<%= v.baseName %>"] = JSON(NSNull())
         }
-<%
-            }  // if (v.required)
-        } else { // if (v.isContainer)
-            if (v.required) {
--%>
+<%          }  // if (v.required) -%>
+<%      } else { // if (v.isContainer) -%>
+<%          if (v.required) { -%>
         json["<%= baseName %>"] = <% -%>
-<% 
-                if (v.isPrimitiveType) {
--%>
+<%              if (v.isPrimitiveType) { -%>
 <%= v.isEnum ? 'self.'+v.name+'.toJSON()' : 'JSON(self.'+v.name+')' %>
-<%
-                } else {
--%>
+<%              } else { -%>
 self.<%= v.name %>.toJSON()
-<%
-                }
-            } else { // if (v.required)
--%>
+<%              } -%>
+<%          } else { // if (v.required) -%>
         if let value = self.<%= v.name %> {
             json["<%= v.baseName %>"] = <% -%>
-<%
-                if (v.isPrimitiveType) {
--%>
+<%          if (v.isPrimitiveType) {-%>
 <%= v.isEnum ? 'value.toJSON()' : 'JSON(value)' %>
-<%
-                } else {
--%>
+<%          } else { -%>
 value.toJSON()
-<%
-                }
--%>
+<%          } -%>
         } else {
             json["<%= v.baseName %>"] = JSON(NSNull())
         }
-<%
-            }  // if (v.required)
-        } // if (v.isContainer)
-    })
--%>
-        
+<%          }  // if (v.required) -%>
+<%      } // if (v.isContainer) -%>
+<%  })-%>
         return JSON(json)
     }
 }
