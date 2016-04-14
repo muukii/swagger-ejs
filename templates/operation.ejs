@@ -4,42 +4,114 @@
 //  Created by SwaggerGen
 //
 
-public struct <%= name + httpMethod %>: RequestContextType, <%= getMethodProtocol(httpMethod) %>, APISessionRequestType, JSONResponseType {  
-  <% allParams.forEach((parameter) => { -%>    
-    <%= getParameter(parameter) %>
-<% }) -%>
+import Foundation
+import Alamofire
+import BrickRequest
+import SwiftyJSON
+import RxSwift
+
+
+public struct <%= name + httpMethod %>: RequestContextType, <%= getMethodProtocol(httpMethod) %>, APISessionRequestType, JSONResponseType {
+
+<%
+  allParams.forEach((p) => {
+-%>
+    let <%= p.paramName %>: <%= p.dataType %><%= p.required ? '' : '?' %>
+<%
+  })
+-%>
 
     public var path: String {
-<% if (pathParams.length > 0) { -%>
-        var path = "<%= path -%>"
-<% pathParams.forEach((param) => { -%>
-        path = path.stringByReplacingOccurrencesOfString("{<%= param.paramName -%>}", withString: "\(self.<%= param.paramName -%>)", options: .LiteralSearch, range: nil)
-<% }) -%>
+<%
+    if (hasPathParams) {
+-%>
+        var path = "<%= path %>"
+<%
+        pathParams.forEach((pathParam) => {
+-%>
+        path = path.stringByReplacingOccurrencesOfString("{<%= pathParam.paramName %>}", withString: "\(self.<%= pathParam.paramName %>)", options: .LiteralSearch, range: nil)
+<%
+        })
+-%>
         return path
-<% } else { -%>
-        return "<%= path -%>"
-<% } -%>
+<%
+    } else {
+-%>
+        return "<%= path %>"
+<%
     }
-    
+-%>
+    }
+
     public var parameterJSON: JSON {
+<%
+    if (hasBodyParam) {
+        var param = head(hasBodyParam)
+-%>
+        return self.<%= param.paramName %>.toJSON()
+<%
+    } else {
+-%>
         var params = [String: JSON]()
-<% queryParams.forEach((query) => { -%>
-        params["<%= query.baseName -%>"] = JSON(self.<%= query.paramName -%>)
-<% }) -%>
-<% bodyParams.forEach((query) => { -%>
-        params["<%= query.baseName -%>"] = JSON(self.<%= query.paramName -%>)
-<% }) -%>
-        return params
+<%
+        allParams.forEach((param) => {
+            if (!param.isPathParam) {
+                if (param.required) {
+-%>
+        params["<%= param.baseName %>"] = JSON(self.<%= param.baseName %>)
+<%
+                } else {
+-%>
+        params["<%= param.baseName %>"] = JSON(NSNull())
+<%
+                }
+            }
+        })
+-%>
+        return JSON(params)
+<%
+    } // if (hasBodyParam)
+-%>
     }
-    
-    public init(<%= allParams.map((parameter) => { return getArgs(parameter)}).join(', ') -%>) {
-<% allParams.forEach((parameter) => { -%>
-        self.<%= parameter.paramName -%> = <%= parameter.paramName -%> 
-<% }) -%>
+
+    public init(
+<%
+    allParams.forEach((param) => {
+-%>
+        <%= param.paramName %>: <%= param.dataType %><%= param.required ? '' : '?' %><%= param.hasMore ? ', ' : '' %>
+<%
+    })
+-%>
+    ) {
+<%
+    allParams.forEach((param) => {
+-%>
+        self.<%= param.paramName %> = <%= param.paramName %>
+<%
+    })
+-%>
     }
-    
-    public func send() -> Observable(JSON) {
+
+    public func send() -> Observable<<%= returnType ? returnType : 'JSON' %>> {
+<%
+    if (returnType) {
+        if (typeof returnContainer !== 'undefined' && returnContainer === 'array') {
+-%>
+        return self.resume().map { arrayJSON in
+            return arrayJSON.array?.flatMap { try? <%= returnBaseType %>(json: $0) } ?? [<%= returnBaseType %>]()
+        }
+<%
+        } else {
+-%>
+        return self.resume().map { try <%= returnType %>(json: $0) }
+<%
+        }
+    } else {
+-%>
         return self.resume()
+<%
+    }
+-%>
     }
 }
 
@@ -80,147 +152,4 @@ function getPath() {
   
 }
 
-%>
-
-<%# Example JSON
-{ 
-  "responseHeaders": [],
-  "hasConsumes": false,
-  "hasProduces": false,
-  "hasParams": true,
-  "hasOptionalParams": true,
-  "isListContainer": true,
-  "hasMore": true,
-  "isResponseBinary": false,
-  "hasReference": true,
-  "path": "/photos",
-  "operationId": "photosGet",
-  "returnType": "[Photos]",
-  "httpMethod": "GET",
-  "returnBaseType": "Photos",
-  "returnContainer": "array",
-  "notes": "Get a single page from the list of all photos.",
-  "baseName": "Default",
-  "allParams": [
-    {
-      "isQueryParam": true,
-      "hasMore": true,
-      "baseName": "page",
-      "paramName": "page",
-      "dataType": "Int32",
-      "description": "Page number to retrieve. (Optional, default: 1)",
-      "jsonSchema": "{\n  \"name\" : \"page\",\n  \"in\" : \"query\",\n  \"description\" : \"Page number to retrieve. (Optional, default: 1)\",\n  \"required\" : false,\n  \"type\" : \"integer\"\n}",
-      "isEnum": false,
-      "vendorExtensions": {}
-    },
-    {
-      "isQueryParam": true,
-      "hasMore": true,
-      "secondaryParam": true,
-      "baseName": "per_page",
-      "paramName": "perPage",
-      "dataType": "Int32",
-      "description": "Number of items per page. (Optional; default: 10)",
-      "jsonSchema": "{\n  \"name\" : \"per_page\",\n  \"in\" : \"query\",\n  \"description\" : \"Number of items per page. (Optional; default: 10)\",\n  \"required\" : false,\n  \"type\" : \"integer\"\n}",
-      "isEnum": false,
-      "vendorExtensions": {}
-    },
-    {
-      "isQueryParam": true,
-      "secondaryParam": true,
-      "baseName": "order_by",
-      "paramName": "orderBy",
-      "dataType": "Int32",
-      "description": "How to sort the photos. Optional. (Valid values: latest, oldest, popular; default: latest)",
-      "jsonSchema": "{\n  \"name\" : \"order_by\",\n  \"in\" : \"query\",\n  \"description\" : \"How to sort the photos. Optional. (Valid values: latest, oldest, popular; default: latest)\",\n  \"required\" : false,\n  \"type\" : \"integer\"\n}",
-      "isEnum": false,
-      "vendorExtensions": {}
-    }
-  ],
-  "bodyParams": [],
-  "pathParams": [],
-  "queryParams": [
-    {
-      "isQueryParam": true,
-      "hasMore": true,
-      "baseName": "page",
-      "paramName": "page",
-      "dataType": "Int32",
-      "description": "Page number to retrieve. (Optional, default: 1)",
-      "jsonSchema": "{\n  \"name\" : \"page\",\n  \"in\" : \"query\",\n  \"description\" : \"Page number to retrieve. (Optional, default: 1)\",\n  \"required\" : false,\n  \"type\" : \"integer\"\n}",
-      "isEnum": false,
-      "vendorExtensions": {}
-    },
-    {
-      "isQueryParam": true,
-      "hasMore": true,
-      "secondaryParam": true,
-      "baseName": "per_page",
-      "paramName": "perPage",
-      "dataType": "Int32",
-      "description": "Number of items per page. (Optional; default: 10)",
-      "jsonSchema": "{\n  \"name\" : \"per_page\",\n  \"in\" : \"query\",\n  \"description\" : \"Number of items per page. (Optional; default: 10)\",\n  \"required\" : false,\n  \"type\" : \"integer\"\n}",
-      "isEnum": false,
-      "vendorExtensions": {}
-    },
-    {
-      "isQueryParam": true,
-      "secondaryParam": true,
-      "baseName": "order_by",
-      "paramName": "orderBy",
-      "dataType": "Int32",
-      "description": "How to sort the photos. Optional. (Valid values: latest, oldest, popular; default: latest)",
-      "jsonSchema": "{\n  \"name\" : \"order_by\",\n  \"in\" : \"query\",\n  \"description\" : \"How to sort the photos. Optional. (Valid values: latest, oldest, popular; default: latest)\",\n  \"required\" : false,\n  \"type\" : \"integer\"\n}",
-      "isEnum": false,
-      "vendorExtensions": {}
-    }
-  ],
-  "headerParams": [],
-  "formParams": [],
-  "tags": [
-    "Default"
-  ],
-  "responses": [
-    {
-      "headers": [],
-      "code": "200",
-      "message": "Success",
-      "hasMore": false,
-      "dataType": "[Photos]",
-      "baseType": "Photos",
-      "containerType": "array",
-      "isDefault": true,
-      "simpleType": false,
-      "primitiveType": false,
-      "isMapContainer": false,
-      "isListContainer": false,
-      "isBinary": false,
-      "schema": {
-        "type": "array",
-        "items": {
-          "$ref": "#/definitions/Photos"
-        }
-      },
-      "jsonSchema": "{\n  \"description\" : \"Success\",\n  \"schema\" : {\n    \"type\" : \"array\",\n    \"items\" : {\n      \"$ref\" : \"#/definitions/Photos\"\n    }\n  }\n}",
-      "wildcard": false
-    }
-  ],
-  "imports": [
-    "Photos"
-  ],
-  "examples": [
-    {
-      "contentType": "application/json",
-      "example": "[ {\n  \"urls\" : {\n    \"small\" : \"aeiou\",\n    \"thumb\" : \"aeiou\",\n    \"raw\" : \"aeiou\",\n    \"regular\" : \"aeiou\",\n    \"full\" : \"aeiou\"\n  },\n  \"color\" : \"aeiou\",\n  \"width\" : \"\",\n  \"links\" : {\n    \"download\" : \"aeiou\",\n    \"self\" : \"aeiou\",\n    \"html\" : \"aeiou\"\n  },\n  \"id\" : \"aeiou\",\n  \"categories\" : [ {\n    \"photo_count\" : \"\",\n    \"links\" : {\n      \"self\" : \"aeiou\",\n      \"photos\" : \"aeiou\"\n    },\n    \"id\" : \"\",\n    \"title\" : \"aeiou\"\n  } ],\n  \"liked_by_user\" : true,\n  \"user\" : {\n    \"profile_image\" : {\n      \"small\" : \"aeiou\",\n      \"large\" : \"aeiou\",\n      \"medium\" : \"aeiou\"\n    },\n    \"name\" : \"aeiou\",\n    \"links\" : {\n      \"self\" : \"aeiou\",\n      \"html\" : \"aeiou\",\n      \"photos\" : \"aeiou\",\n      \"likes\" : \"aeiou\"\n    },\n    \"id\" : \"aeiou\",\n    \"username\" : \"aeiou\"\n  },\n  \"height\" : \"\",\n  \"likes\" : \"\"\n} ]"
-    }
-  ],
-  "vendorExtensions": {},
-  "nickname": "photosGet",
-  "operationIdLowerCase": "photosget",
-  "hasBodyParam": false,
-  "hasQueryParams": true,
-  "hasHeaderParams": false,
-  "hasPathParams": false,
-  "hasFormParams": false
-}
 %>
