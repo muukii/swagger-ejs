@@ -1,5 +1,5 @@
 {
-  "name": "swagger",
+  "name": "swaggerejs",
   "version": "0.0.0",
   "description": "",
   "main": "index.js",
@@ -18,8 +18,7 @@
     "typescript": "^1.8.9"
   },
   "devDependencies": {},
-  "scripts": {
-    "start": "sh swagger-codegen.sh | node swagger-codegen.js",
+  "scripts": {    
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "muukii <muukii.muukii@gmail.com> (http://www.muukii.me/)",
