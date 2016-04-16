@@ -1,10 +1,10 @@
 {
-  "name": "swaggerejs",
+  "name": "swagger-ejs",
   "version": "0.0.0",
   "description": "",
   "main": "index.js",
   "bin": {
-    "swaggerejs": "bin/swaggerejs"
+    "swaggerejs": "bin/swagger-ejs"
   },
   "preferGlobal": true,
   "dependencies": {
@@ -18,9 +18,9 @@
     "typescript": "^1.8.9"
   },
   "devDependencies": {},
-  "scripts": {    
+  "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "muukii <muukii.muukii@gmail.com> (http://www.muukii.me/)",
+  "author": "muukii <m@muukii.me> (http://muukii.me/)",
   "license": "MIT"
 }
