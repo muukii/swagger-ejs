@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "bin": {
-    "swaggerejs": "bin/swagger-ejs"
+    "swagger-ejs": "bin/swagger-ejs"
   },
   "preferGlobal": true,
   "dependencies": {
