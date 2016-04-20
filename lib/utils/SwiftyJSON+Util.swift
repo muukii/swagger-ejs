@@ -68,6 +68,11 @@ extension JSON {
     public init(_ longLong: Int64) {
         self.init(NSNumber(longLong: longLong))
     }
+    
+    public init(_ object: _EncodableToJSON) {
+        let json = object.toJSON()
+        self.init(json.dictionary ?? [:])
+    }
 
     public var dictionaryObjectNoNullValues: [String : AnyObject]? {
 
@@ -223,6 +228,6 @@ protocol _InitializableFromJSON {
     init(json: JSON) throws
 }
 
-protocol _EncodableToJSON {
+public protocol _EncodableToJSON {
     func toJSON() -> JSON
 }
