@@ -6,7 +6,6 @@
   "bin": {
     "swagger-ejs": "bin/swagger-ejs"
   },
-  "preferGlobal": true,
   "dependencies": {
     "colors": "^1.1.2",
     "commander": "^2.9.0",
