@@ -195,7 +195,7 @@ extension JSON {
     }
 
     func getOptionalObject<T: _InitializableFromJSON>(toType: T.Type) throws -> T? {
-        return try toType.init(json: self)
+        return try? toType.init(json: self)
     }
 
     func getObjects<T: _InitializableFromJSON>(toType: T.Type) throws -> [T] {
