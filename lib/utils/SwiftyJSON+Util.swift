@@ -93,6 +93,15 @@ extension JSON {
         return newDictionary
     }
 
+    public func getValue<T>(withClosure: ((JSON: JSON) -> T?)) throws -> T {
+        
+        guard let value = withClosure(JSON: self) else {
+            throw self.error!
+        }
+        
+        return value
+    }
+
     func getString() throws -> String {
         try checkError()
         return try unwrap(self.string)
